@@ -1,4 +1,4 @@
-# PoC - Aplicação NetCore 3.1 com IBM MQ 9
+# PoC - Strategy.Core Project
 
 Esta aplicação de teste com NetCore 3.1, tem a finalidade de expor uma API REST para enviar ou receber mensagens do broker, IBM MQ.
 
