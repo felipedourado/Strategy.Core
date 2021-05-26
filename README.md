@@ -22,7 +22,7 @@ Esta aplicação de teste com NetCore 3.1, tem a finalidade de expor uma API RES
 
 ## Pré Requisitos
 
- - SDK NetCore 3.1
+ - SDK NetCore 5.0
  - Visual Studio Code * ou Rider ou Visual Studio 2019
  - Acesso a algum Queue Manager e Queue do IBM MQ.
  
