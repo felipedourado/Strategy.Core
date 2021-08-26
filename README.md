@@ -1,273 +1,89 @@
-# PoC - Aplicação NetCore 3.1 com IBM MQ 9
+# Strategy Pattern Project
 
-Esta aplicação de teste com NetCore 3.1, tem a finalidade de expor uma API REST para enviar ou receber mensagens do broker, IBM MQ.
+<p align="center">A minimal, clean and beautiful mobile app to help people find the closest pet friend to adopt, rescue lives and change the world.</p>
 
-## Conteúdo
+<p align="center"><i>"How to save a life?" - The Fray</i> </p>
 
-- [Pré Requisitos](#pre-requisitos)
-- [Casos de Uso](#casos-de-uso)
-- [Trade Offs](#trade-offs)
-- [Configurando sua Aplicação](#configurando-sua-aplicação)
-  - [Inclusão do Pacote IBMMQDotnetClient no NuGet](#inclusão-do-pacote-ibmdotnetclient-no-nuget)
-  - [Inclusão das propriedades do MQ no arquivo "app.settings.json"](#Inclusão-das-propriedades-do-MQ-no-arquivo-"app.settings.json")
-  - [Carregando as Configurações do arquivo de propriedades](#Carregando-as-Configurações-do-arquivo-de-propriedades)
-- [Produzindo uma mensagem](#Produzindo-uma-mensagem)
-- [Consumindo uma mensagem](#consumindo-uma-mensagem)
-- [Testando o Projeto Localmente](#Testando-o-Projeto-Localmente)
-  - [Producer](#producer)
-  - [Consumer](#consumer)
-- [Configuração do DevOps do Projeto](#Configuração-do-DevOps-do-Projeto)
-  - [Arquivo Dockerfile](#dockerfile)
-  
+<p align="center"> 
+  <a href="https://discord.gg/BHHz77rhb6">
+    <img src="https://img.shields.io/discord/829042103295410197?color=%237289DA&label=Animavita&logo=discord&logoColor=white" alt="Discord">
+  </a>
+  <a href="http://makeapullrequest.com">
+    <img src="https://img.shields.io/badge/progress-40%25-brightgreen.svg" alt="PRs Welcome">
+  </a>
+  <a href="http://makeapullrequest.com">
+    <img src="https://img.shields.io/badge/contribuition-welcome-brightgreen.svg" alt="PRs Welcome">
+  </a>
+  <a href="https://saythanks.io/to/wendelfreitas">
+      <img src="https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg">
+  </a>
+<a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." /></a>  
+</p>
 
-## Pré Requisitos
+<p align="center">
+  <a href="#blush-why">Why</a> •
+  <a href="#dizzy-roadmap">Roadmap</a> •
+  <a href="#zap-tech-stack">Tech Stack</a> •
+  <a href="#handshake-contributing">Contributing</a> •  
+  <a href="#tophat-license">License</a> •
+  <a href="#art-about-me">About Me</a>
+</p>
 
- - SDK NetCore 3.1
- - Visual Studio Code * ou Rider ou Visual Studio 2019
- - Acesso a algum Queue Manager e Queue do IBM MQ.
- 
- ## Casos de Uso
- 
- - Integração entre sistemas de forma assíncrona
- - Resiliência da aplicação
- - Baixo acoplamento
- - Garantia de entrega da mensagem
- 
-  ## Trade Offs
-  
-  - Desenvolvimento mais complexo
-  - Não garante a ordenação das mensagens
- 
- ## Configurando sua Aplicação
- 
- ### Inclusão do Pacote IBMMQDotnetClient no NuGet
+## :blush: **Why?**
 
-A aplicação precisa entender as referências a biblitoca de abstracão com o MQ, desta forma, basta adicionar o pacote IBMMQDotnetClient na versão 9.1.5 e o namespace abaixo:
+Animavita is a combination of two Latin words, ‘Animal’ and ‘Vitae’, which means respectively ‘Animal’ and ‘Life’. This is an idea to create or animate something that was born a while ago, when I realized that facebook is used to publicize adoption and also ask for help for animals that lives on the streets.
 
-````c#
-using IBM.WMQ;
-````
- 
- ### Inclusão das propriedades do MQ no arquivo "app.settings.json"
+Animavita's purpose is not to change how people use facebook to the activities described above, but to centralize the helpful information in a single application. Anyone can make an adoption request, but it doesn’t mean that the pet will be automatically adopted. It means that the person interested can talk to the person who registered the pet, allowing both sides to have a conversation, and the user to research and decide his favorite pet.
 
- Adicionar as linhas abaixo no seu arquivo "app.settings.json" da aplicação com as configurações de "Hostname", "Porta" e "Channel" do IBM MQ.
- 
- ````json
-"MqConnection" : {
-    "HostName" : "nmHostName",
-    "Port" : nrPorta,
-    "Channel" : "nmChannel"
-  }
-````
+## :dizzy: **Roadmap**
 
-### Carregando as Configurações do arquivo de propriedades
+Check
 
-Incluir no seu código a interface IConfiguration com o modificador de acesso privado
-  
-````C#
-private readonly IConfiguration config;
-````
+-   [ ] (Expo, Relay and GraphQL)
+-   [ ] MongoConnection
+-   [ ] SqlServer Connection
+-   [ ] Entity Framework
+-   [ ] JWT
+-   [ ] Kafka Producer/Consumer
+-   [ ] Redis
+-   [ ] InMemory
+-   [ ] HealthCheck Ui Dashboard (Xabaril)
+-   [ ] Swashbuckle Improve
+-   [ ] Model validation (Empty, default, validation with enums) and Fluent validation
+-   [ ] Feature toogle (via mongo, via appsettings)
+-   [ ] Resilience Pattern (Polly (Circuit Breaker, Retry, Fallback))
+-   [ ] Rabbit Producer/Consumer
+-   [ ] Dapper
+-   [ ] HttpFactory
+-   [ ] Startup Extension
+-   [ ] Docker Application
 
-Criar um construtor da sua Classe para que o arquivo de propriedades possa ser injetado assim que esta classe for inicializada.
-Estas propriedades servirão para acesso ao IBM MQ.
+## :rocket: **Tech tools**
 
-````c#
-public MQTesteController(IConfiguration config)
-{
-        this.config = config;
-        
-        // Obter as propriedades do MQ do arquivo appsettings.json e incluí-las na Hashtable qMgrProp
-        qMgrProp = new Hashtable();
-        qMgrProp.Add(MQC.TRANSPORT_PROPERTY, MQC.TRANSPORT_MQSERIES_MANAGED);
-        qMgrProp.Add(MQC.HOST_NAME_PROPERTY, config.GetSection("MqConnection:HostName").Value);
-        qMgrProp.Add(MQC.PORT_PROPERTY, Convert.ToInt16(config.GetSection("MqConnection:Port").Value));
-        qMgrProp.Add(MQC.CHANNEL_PROPERTY, config.GetSection("MqConnection:Channel").Value);
-        qMgrProp.Add(MQC.CONNECT_OPTIONS_PROPERTY, MQC.MQCNO_RECONNECT_Q_MGR);
-}
-````
- 
- 
-## Produzindo uma mensagem
+-   [Net.Core 5.0](https://github.com/facebook/react-native-fbsdk)
+-   [Swashbuckle](https://github.com/expo/expo)
+-   [HealthCheck](https://www.styled-components.com/)
+-   [Reactotron](https://infinite.red/reactotron)
+-   [Eslint](https://eslint.org/)
+-   [Redux](https://github.com/reduxjs/react-redux)
+-   [MongoDB](https://www.mongodb.com/)
+-   [Formik + Yup](https://jaredpalmer.com/formik/)
+-   [Relay](https://github.com/facebook/relay)
+-   [GraphQL](https://github.com/facebook/graphql)
+-   [Kraken](https://github.com/wendelfreitas/kraken)
+-   [OneSignal](https://onesignal.com)
+-   [AWS](https://aws.amazon.com/pt/)
+-   [Redux-Persist](https://github.com/rt2zz/redux-persist)
 
- O código abaixo irá gerar um produzir um evento com uma mensagem para o IBM MQ.
+## :handshake: **Contributing**
 
-````c#
-// Definir o nome do Queue Manager e o nome Queue do MQ
-var nomeQueueManager = "nmQueueManager";
-var nomeQueue = "nmQueue";
+This project is for study or guide for new applications with strategy pattern and following microservices concepts and hexagonal architecture. 
 
-MQQueueManager queueManager = null;
-MQQueue queue = null;
+All kinds of contributions are very welcome and appreciated!
 
-var openOptions = MQC.MQOO_OUTPUT + MQC.MQOO_FAIL_IF_QUIESCING;
-var pmo = new MQPutMessageOptions();
+-   ⭐️ Star the project
+-   🐛 Find and report issues
+-   📥 Submit PRs to help solve issues or add features
+-   ✋ Influence the future of Animavita with feature requests
 
-try
-{
-
-    queueManager = new MQQueueManager(nomeQueueManager, qMgrProp);
-    //Console.WriteLine("MQTest01 successfully connected to " + qManager);
-
-    queue = queueManager.AccessQueue(nomeQueue, openOptions);
-    //Console.WriteLine("MQTest01 successfully opened " + outputQName);
-
-    // Defina uma mensagem simples do MQ e escreva algum texto no formato UTF.
-    var msg = new MQMessage();
-    msg.Format = MQC.MQFMT_STRING;
-    msg.MessageType = MQC.MQMT_DATAGRAM;
-    msg.MessageId = MQC.MQMI_NONE;
-    msg.CorrelationId = MQC.MQCI_NONE;
-    msg.WriteString(mensagem); // variavel mensagem é a informação que deseja enviar ao MQ
-
-    // Colocar a mensagem na fila
-    queue.Put(msg, pmo);
-
-    retorno.Add("Mensagem: " + mensagem + " \n incluida com sucesso !\n" + queue.ToString());
-   
-    
-}
-catch (MQException mqex)
-{
-    Console.WriteLine("MQTest01 CC=" + mqex.CompletionCode + " : RC=" + mqex.ReasonCode);
-}
-catch (IOException ioex)
-{
-    Console.WriteLine("MQTest01 ioex=" + ioex);
-}
-finally
-{
-    try
-    {
-        if (queue != null)
-        {
-            queue.Close();
-            Console.WriteLine("MQTest01 closed: " + nomeQueue);
-        }
-    }
-    catch (MQException mqex)
-    {
-        Console.WriteLine("MQTest01 CC=" + mqex.CompletionCode + " : RC=" + mqex.ReasonCode);
-    }
-
-    try
-    {
-        if (queueManager != null)
-        {
-            queueManager.Disconnect();
-            Console.WriteLine("MQTest01 disconnected from " + nomeQueueManager);
-        }
-    }
-    catch (MQException mqex)
-    {
-        Console.WriteLine("MQTest01 CC=" + mqex.CompletionCode + " : RC=" + mqex.ReasonCode);
-    }
-}
-
-````
- 
- 
-## Consumindo uma mensagem
- 
- O código abaixo tem o objetivo de consumir uma mensagem de uma fila no IBM MQ
- 
- `````c#
-// Definir o nome do Queue Manager e o nome Queue do MQ
-var nomeQueueManager = "nmQueueManager";
-var nomeQueue = "nmQueue";
-
-var fila = new List<string>();
-
-MQQueueManager queueManager = null;
-MQQueue queue = null;
-MQMessage mensagem = null;
-
-try
-{
-    // Instanciar o Queue Manager e acessar a fila
-    queueManager = new MQQueueManager(nomeQueueManager, qMgrProp);
-    queue = queueManager.AccessQueue(nomeQueue,
-        MQC.MQOO_INPUT_AS_Q_DEF + MQC.MQOO_FAIL_IF_QUIESCING);
-
-    // Classe contém opções que controlam o comportamento de MQQueue.get()
-    var gmo = new MQGetMessageOptions();
-    gmo.Options |= MQC.MQGMO_NO_WAIT | MQC.MQGMO_FAIL_IF_QUIESCING;
-
-    // Representa o descritor de mensagens e os dados para uma mensagem do IBM MQ
-    mensagem = new MQMessage {Format = MQC.MQFMT_STRING};
-
-    // Obter a mensagem
-    queue.Get(mensagem, gmo);
-    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-    fila.Add(mensagem.ReadString(mensagem.MessageLength));
-
-}
-
-catch (MQException e)
-{
-    Console.WriteLine(e);
-    throw;
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-    throw;
-}
-
-finally
-{
-    try
-    {
-        if (queue != null)
-        {
-            queue.Close();
-            Console.WriteLine("MQTest01 closed: " + nomeQueue);
-        }
-    }
-    catch (MQException mqex)
-    {
-        Console.WriteLine("MQTest01 CC=" + mqex.CompletionCode + " : RC=" + mqex.ReasonCode);
-    }
-
-    try
-    {
-        if (queueManager != null)
-        {
-            queueManager.Disconnect();
-            Console.WriteLine("MQTest01 disconnected from " + nomeQueueManager);
-        }
-    }
-    catch (MQException mqex)
-    {
-        Console.WriteLine("MQTest01 CC=" + mqex.CompletionCode + " : RC=" + mqex.ReasonCode);
-    }
-}
-``````
-
-## Testando o Projeto Localmente
-
-### Producer
-Exemplo abaixo ilustrando a aplicação enviando uma mensagem para o IBM MQ.
-
-![image](images/img_test_producer.PNG)
-
-### Consumer
-
-Exemplo abaixo ilustrando a aplicação consumindo uma mensagem do IBM MQ.
-
-![image](images/img_test_consumer.PNG)
-
-
-### Dockerfile
-
-Caso o objetivo da aplicação seja executar em ambiente Linux ou MacOS, no Dockerfile do seu projeto, deve ser incluido o usúario de serviço da aplicação, para que sua aplicação containerizada possa se autenticar no IBM MQ.
-
-````dockerfile
-FROM {{ application_image_name }}:{{ application_version }}
-USER root
-RUN useradd -U usuarioDeServicoDoMq
-ADD appsettings.json /app/out
-USER usuarioDeServicoDoMq
-````
-
-
+And make sure to read the [Contributing Guide](/CONTRIBUTION.md) before making a pull request.
