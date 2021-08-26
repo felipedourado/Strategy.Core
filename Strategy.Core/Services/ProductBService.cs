@@ -2,7 +2,7 @@
 
 namespace Strategy.Core.Services
 {
-    public class ProductB : IProducts
+    public class ProductBService : IProducts
     {
         public void MethodGenericForAll()
         {

@@ -1,4 +1,5 @@
-﻿using Strategy.Core.Services.Interfaces;
+﻿using System.Threading.Tasks;
+using Strategy.Core.Services.Interfaces;
 
 namespace Strategy.Core.Services
 {
@@ -21,9 +22,10 @@ namespace Strategy.Core.Services
             _products = products;
         }
 
-        public void MethodBusiness()
+        public async Task MethodBusiness()
         {
             //Call method by product context
+            
         }
     }
 }
