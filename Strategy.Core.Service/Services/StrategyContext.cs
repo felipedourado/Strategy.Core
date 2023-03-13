@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Strategy.Core.Services.Interfaces;
+﻿using Strategy.Core.Domain.Interfaces.Services;
+using Strategy.Core.Domain.Models;
 
 namespace Strategy.Core.Services
 {
@@ -22,9 +22,10 @@ namespace Strategy.Core.Services
             _products = products;
         }
 
-        public async Task MethodBusiness()
+        public async Task MethodBusiness(AccountBase request)
         {
             //Call method by product context
+            _products.Save(request);
             
         }
     }

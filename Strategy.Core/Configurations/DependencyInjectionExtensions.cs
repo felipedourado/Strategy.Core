@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Strategy.Core.Repositories.Interfaces;
-using Strategy.Core.Repositories;
-using Strategy.Core.Services.Interfaces;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Strategy.Core.Domain.Interfaces.Repositories;
+using Strategy.Core.Domain.Interfaces.Services;
+using Strategy.Core.Domain.Settings;
+using Strategy.Core.Infra.Repositories;
 using Strategy.Core.Services;
 
 namespace Strategy.Core.Configurations
@@ -10,9 +13,22 @@ namespace Strategy.Core.Configurations
     {
         public static void AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<IProducts, ProductAService>();
-            services.AddSingleton<IProducts, ProductBService>();
+            services.AddSingleton<IProducts, DigitalAccountService>();
+            services.AddSingleton<IProducts, PhysicalAccountService>();
             services.AddSingleton<IStrategyContext, StrategyContext>();
+
+            services.AddScoped(typeof(IMongoGenericService<>), typeof(MongoGenericService<>));
+        }
+
+        public static void RegisterSettings(this IServiceCollection services, IConfiguration config)
+        {
+            services.Configure<MongoSettings>(option =>
+            {
+                option.ConnectionString = config.GetSection("MongoDb:ConnectionString").Value;
+                option.DatabaseName = config.GetSection("MongoDb:DatabaseName").Value;
+            });
+
+            services.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<MongoSettings>>().Value);
         }
     }
 }

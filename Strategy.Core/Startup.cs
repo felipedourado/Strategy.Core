@@ -1,22 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Strategy.Core.Configurations;
-using Strategy.Core.Repositories;
-using Strategy.Core.Repositories.Interfaces;
-using Strategy.Core.Services;
-using Strategy.Core.Services.Interfaces;
 
 namespace Strategy.Core
 {
@@ -33,7 +21,7 @@ namespace Strategy.Core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddServices();
-            services.AddSingleton(typeof(IMongoGenericService<>), typeof(MongoGenericService<>));
+            services.RegisterSettings(Configuration);
 
             services.AddControllers();
             services.AddSwagger();
@@ -41,6 +29,7 @@ namespace Strategy.Core
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -51,24 +40,23 @@ namespace Strategy.Core
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Strategy.Core"));
 
             app.UseHealthChecks(new PathString(Configuration.GetSection("BasePathHealthCheck").Value.ToLower()));
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-           
+
             //app.UseElasticApm(Configuration)
             //app.UseHealthChecks()
             //TO-DO Roadmap CODE
-        
+
             //instanciar o apm
             //um service fazer producer
             //um service fazer consumer
             //fazer validacao de model por annotations, fluent, annotations proprio
             //handling null 
             //feature toogle via mongo e um via appsettings
-            //pegar config do appsettings pelo static
             //colocar teste automatizado (Nunit, Junit, mocha, xunit) (testar com chatgpt
             //teste coberturas
             //teste de integração (cypress.io, cucumber)
@@ -76,7 +64,7 @@ namespace Strategy.Core
             //istio (usar resilience pattern, correlationId(jaeger), load balancer para fazer canary deploy 
             //documentar
             //subir redis
-            //segundo cache caso caia o redis
+            //segundo cache caso caia o redis (inmemory)
             //encontrar como usar o ocelot
             //colocar identity server, ouath, jwt, keycloack
             //subir um mongo docker

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Strategy.Core.Domain.Interfaces.Services;
+using Strategy.Core.Domain.Models;
 using Strategy.Core.Models;
 using Strategy.Core.Services;
-using Strategy.Core.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace Strategy.Core.Controllers
 {
@@ -18,26 +19,30 @@ namespace Strategy.Core.Controllers
         }
 
         /// <summary>
-        /// Api de teste
+        /// Api save digital account product
         /// </summary>
         /// <returns></returns>
-        [HttpPost("productA")]
+        [HttpPost("digital-account")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationErrorMessage), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> SaveProductA()
+        public async Task<ActionResult> SaveDigitalAccount(DigitalAccountRequest request)
         {
-            _strategyContext.Set(new ProductAService());
-            await _strategyContext.MethodBusiness();
+            //_strategyContext.Set(new DigitalAccountService());
+            await _strategyContext.MethodBusiness(request);
             return StatusCode(201);
         }
 
-        [HttpPost("productB")]
-        public async Task<ActionResult> SaveProductB()
+        /// <summary>
+        /// Api save physical account product 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("physical-account")]
+        public async Task<ActionResult> SavePhysicalAccount(PhysicalAccountRequest request)
         {
-            _strategyContext.Set(new ProductBService());
-            await _strategyContext.MethodBusiness();
-            return Ok();
+            _strategyContext.Set(new PhysicalAccountService());
+            await _strategyContext.MethodBusiness(request);
+            return StatusCode(201);
         }
     }
 }
