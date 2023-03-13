@@ -4,7 +4,7 @@ using System;
 
 namespace Strategy.Core.Domain.Base
 {
-    public class MongoDocumentBase
+    public class MongoDocumentBase : IMongoDocumentBase
     {
         [BsonId]
         [BsonRepresentation(BsonType.String)]

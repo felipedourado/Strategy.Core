@@ -2,7 +2,7 @@
 
 namespace Strategy.Core.Domain.Base
 {
-    public interface ICollectionBase
+    public interface IMongoDocumentBase
     {
         ObjectId Id { get; set; }
         DateTime CreateDate { get; }

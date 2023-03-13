@@ -6,7 +6,7 @@ using Strategy.Core.Domain.Settings;
 
 namespace Strategy.Core.Infra.Repositories
 {
-    public class MongoGenericService<TDocument> : IMongoGenericService<TDocument> where TDocument : ICollectionBase
+    public class MongoGenericService<TDocument> : IMongoGenericService<TDocument> where TDocument : IMongoDocumentBase
     {
         private readonly IMongoCollection<TDocument> _collection;
         private readonly MongoSettings _settings;
