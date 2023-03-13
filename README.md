@@ -48,14 +48,14 @@ Check
 -   [ ] Redis
 -   [ ] InMemory
 -   [ ] HealthCheck Ui Dashboard (Xabaril)
--   [ ] Swashbuckle Improve
+-   [X] Swashbuckle
 -   [ ] Model validation (Empty, default, validation with enums) and Fluent validation
 -   [ ] Feature toogle (via mongo, via appsettings)
 -   [ ] Resilience Pattern (Polly (Circuit Breaker, Retry, Fallback))
 -   [ ] Rabbit Producer/Consumer
 -   [ ] Dapper
 -   [ ] HttpFactory
--   [ ] Startup Extension
+-   [X] Startup Extension
 -   [ ] Docker Application
 
 ## :rocket: **Tech tools**
