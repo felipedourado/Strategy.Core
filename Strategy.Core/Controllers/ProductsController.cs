@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Strategy.Core.Models;
 using Strategy.Core.Services;
 using Strategy.Core.Services.Interfaces;
 
@@ -15,12 +17,19 @@ namespace Strategy.Core.Controllers
             this._strategyContext = strategyContext;
         }
 
+        /// <summary>
+        /// Api de teste
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("productA")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ValidationErrorMessage), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> SaveProductA()
         {
             _strategyContext.Set(new ProductAService());
             await _strategyContext.MethodBusiness();
-            return Ok();
+            return StatusCode(201);
         }
 
         [HttpPost("productB")]

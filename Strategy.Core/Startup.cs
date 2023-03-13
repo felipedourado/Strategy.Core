@@ -32,31 +32,11 @@ namespace Strategy.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IProducts, ProductAService>();
-            services.AddSingleton<IProducts, ProductBService>();
-            services.AddSingleton<IStrategyContext, StrategyContext>();
+            services.AddServices();
             services.AddSingleton(typeof(IMongoGenericService<>), typeof(MongoGenericService<>));
 
-            var swaggerConfig = Configuration.GetSection("SwaggerConfig");
-
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Strategy",
-                    Version = "v1",
-                    Description = "Strategy Trial",
-                    TermsOfService = new Uri(swaggerConfig.GetSection("TermsOfServiceUrl").Value),
-                    Contact = new OpenApiContact()
-                    {
-                        Name = "Golden Programming",
-                        Email = string.Empty,
-                        Url = new Uri(swaggerConfig.GetSection("ContactUrl").Value)
-                    }
-                });
-            });
-
+            services.AddSwagger();
             services.AddHealthChecks();
         }
 
@@ -69,49 +49,27 @@ namespace Strategy.Core
             }
 
             app.UseHttpsRedirection();
-            app.UsePathBase(new PathString(Configuration.GetSection("BasePath").Value.ToLower()) + "/");
             app.UseRouting();
-
             app.UseAuthorization();
-
-            var swaggerConfig = new SwaggerConfig();
-            Configuration.GetSection(nameof(SwaggerConfig)).Bind(swaggerConfig);
-
-            app.UseSwagger(c =>
-            {
-                c.RouteTemplate = swaggerConfig.JsonRoute;
-                c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer>
-                    {
-                        new OpenApiServer()
-                        {
-                            Url = $"https://" +
-                                  $"{httpReq.Host.Value}{new PathString(Configuration.GetSection("BasePath").Value)}"
-                        }
-                    };
-                });
-            });
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint(swaggerConfig.UIEndpoint, swaggerConfig.Description);
-                c.RoutePrefix = swaggerConfig.RoutePrefix;
-            });
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Strategy.Core"));
 
             app.UseHealthChecks(new PathString(Configuration.GetSection("BasePathHealthCheck").Value.ToLower()));
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+           
             //app.UseElasticApm(Configuration)
             //app.UseHealthChecks()
             //TO-DO Roadmap CODE
-            //configurar o swashbuckle
+        
             //instanciar o apm
             //um service fazer producer
             //um service fazer consumer
-            //fazer validacao de model por annotations e/ou fluent
+            //fazer validacao de model por annotations, fluent, annotations proprio
+            //handling null 
             //feature toogle via mongo e um via appsettings
             //pegar config do appsettings pelo static
-            //colocar teste automatizado (Nunit, Junit, mocha)
+            //colocar teste automatizado (Nunit, Junit, mocha, xunit) (testar com chatgpt
             //teste coberturas
             //teste de integração (cypress.io, cucumber)
             //resilience pattern
@@ -124,7 +82,6 @@ namespace Strategy.Core
             //subir um mongo docker
             //subir um sql server
             //entity framework
-            //net core 5.0
             //dapper
 
             //criar microservico em go
