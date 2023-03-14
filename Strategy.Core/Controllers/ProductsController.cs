@@ -20,7 +20,7 @@ namespace Strategy.Core.Controllers
         }
 
         /// <summary>
-        /// Api save digital account product
+        /// Api save digital account in mongodb
         /// </summary>
         /// <returns></returns>
         [HttpPost("digital-account")]
@@ -34,7 +34,7 @@ namespace Strategy.Core.Controllers
         }
 
         /// <summary>
-        /// Api save physical account product 
+        /// Api save physical account sql server 
         /// </summary>
         /// <returns></returns>
         [HttpPost("physical-account")]
