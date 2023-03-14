@@ -3,9 +3,8 @@ using Strategy.Core.Domain.Models;
 
 namespace Strategy.Core.Domain.Interfaces.Services
 {
-    public interface IProducts
+    public interface IStrategy
     {
-        AccountType AccountType { get; }
-        Task Save(AccountBase request);
+        Task Save(AccountBase request, AccountType accountType);
     }
 }

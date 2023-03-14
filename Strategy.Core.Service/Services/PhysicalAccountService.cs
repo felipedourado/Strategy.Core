@@ -1,4 +1,5 @@
-﻿using Strategy.Core.Domain.Interfaces.Services;
+﻿using Strategy.Core.Domain.Enum;
+using Strategy.Core.Domain.Interfaces.Services;
 using Strategy.Core.Domain.Models;
 using System.Runtime.InteropServices;
 
@@ -6,9 +7,11 @@ namespace Strategy.Core.Services
 {
     public class PhysicalAccountService : IProducts
     {
-        public void Save(AccountBase request)
+        public AccountType AccountType => AccountType.Physical;
+
+        public Task Save(AccountBase request)
         {
-            //rule for product B
+            throw new NotImplementedException();
         }
 
         private TimeZoneInfo GetBrasilTimeZone()

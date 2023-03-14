@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using Strategy.Core.Domain.Entities;
+using Strategy.Core.Domain.Enum;
 using Strategy.Core.Domain.Interfaces.Repositories;
 using Strategy.Core.Domain.Interfaces.Services;
 using Strategy.Core.Domain.Models;
@@ -10,15 +11,20 @@ namespace Strategy.Core.Services
     {
         private readonly IMongoGenericRepository<DigitalAccountEntity> _mongoRepository;
 
+        public AccountType AccountType => AccountType.Digital;
+
         public DigitalAccountService(IMongoGenericRepository<DigitalAccountEntity> mongoRepository)
         {
             _mongoRepository= mongoRepository;
         }
 
-        public void Save(AccountBase request)
+        public async Task Save(AccountBase request)
         {
             //rule for this product
-            _mongoRepository.CreateAsync(new DigitalAccountEntity { Account = request.Account, Agency = request.Agency, Product = "Zyon", Name = "Orion" });
+            await _mongoRepository.CreateAsync(new DigitalAccountEntity
+            {
+                Account = request.Account, Agency = request.Agency, Product = "Zyon", Name = "Orion" 
+            });
         }
 
         public async Task<IEnumerable<DigitalAccountEntity>> Get(DateTime data)

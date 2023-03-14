@@ -3,6 +3,7 @@ using Strategy.Core.Domain.Base;
 
 namespace Strategy.Core.Domain.Entities
 {
+    [MongoCustomAttribute("digitalAccountCollection")]
     public class DigitalAccountEntity : MongoDocumentBase
     {
         [BsonElement("agency")]

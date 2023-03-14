@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Strategy.Core.Domain.Enum;
 using Strategy.Core.Domain.Interfaces.Services;
 using Strategy.Core.Domain.Models;
 using Strategy.Core.Models;
@@ -11,11 +12,11 @@ namespace Strategy.Core.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IStrategyContext _strategyContext;
+        private readonly IStrategy _strategy;
 
-        public ProductsController(IStrategyContext strategyContext)
+        public ProductsController(IStrategy strategy)
         {
-            this._strategyContext = strategyContext;
+            _strategy = strategy;
         }
 
         /// <summary>
@@ -28,8 +29,7 @@ namespace Strategy.Core.Controllers
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> SaveDigitalAccount(DigitalAccountRequest request)
         {
-            //_strategyContext.Set(new DigitalAccountService());
-            await _strategyContext.MethodBusiness(request);
+            await _strategy.Save(request, AccountType.Digital);
             return StatusCode(201);
         }
 
@@ -40,8 +40,7 @@ namespace Strategy.Core.Controllers
         [HttpPost("physical-account")]
         public async Task<ActionResult> SavePhysicalAccount(PhysicalAccountRequest request)
         {
-            _strategyContext.Set(new PhysicalAccountService());
-            await _strategyContext.MethodBusiness(request);
+            await _strategy.Save(request, AccountType.Physical);
             return StatusCode(201);
         }
     }

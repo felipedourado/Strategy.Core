@@ -14,8 +14,8 @@ namespace Strategy.Core.Configurations
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IProducts, DigitalAccountService>();
-            services.AddSingleton<IProducts, PhysicalAccountService>();
-            services.AddSingleton<IStrategyContext, StrategyContext>();
+            services.AddScoped<IProducts, PhysicalAccountService>();
+            services.AddScoped<IStrategy, Context>();
 
             services.AddScoped(typeof(IMongoGenericRepository<>), typeof(MongoGenericRepository<>));
         }
