@@ -13,11 +13,11 @@ namespace Strategy.Core.Configurations
     {
         public static void AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<IProducts, DigitalAccountService>();
+            services.AddScoped<IProducts, DigitalAccountService>();
             services.AddSingleton<IProducts, PhysicalAccountService>();
             services.AddSingleton<IStrategyContext, StrategyContext>();
 
-            services.AddScoped(typeof(IMongoGenericService<>), typeof(MongoGenericService<>));
+            services.AddScoped(typeof(IMongoGenericRepository<>), typeof(MongoGenericRepository<>));
         }
 
         public static void RegisterSettings(this IServiceCollection services, IConfiguration config)

@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Helpers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Strategy.Core.Domain\Strategy.Core.Domain.csproj" />
       <ProjectReference Include="..\Strategy.Core.Infra\Strategy.Core.Infra.csproj" />
       <ProjectReference Include="..\Strategy.Core.Service\Strategy.Core.Service.csproj" />
